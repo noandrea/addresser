@@ -1,5 +1,6 @@
-dist
+.coverage
 **__pycache__
 coverage.xml
-.coverage
+dist
+private
 test-results.xml

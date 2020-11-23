@@ -65,12 +65,6 @@ docker-push:
 	docker push $(DOCKER_REGISTRY)/$(DOCKER_IMAGE):$(DOCKER_TAG)
 	@echo done
 
-docker-run: 
-	docker run -p 2007:2007 $(DOCKER_IMAGE):latest
-
-debug-start:
-	@poetry run addresser serve --data data.json
-
 k8s-deploy:
 	@echo deploy k8s
 	kubectl -n $(K8S_NAMESPACE) set image deployment/$(K8S_DEPLOYMENT) $(DOCKER_IMAGE)=$(DOCKER_REGISTRY)/$(DOCKER_IMAGE):$(DOCKER_TAG)
