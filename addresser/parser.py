@@ -36,3 +36,4 @@ def parse(address: str) -> Address:
     start = time.time()
 
     print(f"Completed in {time.time() - start}")
+    return Address("a", "b")
