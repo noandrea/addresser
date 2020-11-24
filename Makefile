@@ -29,8 +29,8 @@ build-dist: $(GOFILES)
 	poetry build
 
 	$(eval P=$(shell poetry version | sed -e 's/ /-/g'))
-	sha256sum $(OUTPUTFOLDER)/$(P).tar.gz | tee $(OUTPUTFOLDER)/$(P).tar.gz.checksum
-	sha256sum $(OUTPUTFOLDER)/$(P)-py3-none-any.whl | tee $(OUTPUTFOLDER)/$(P)-py3-none-any.whl.checksum
+	sha256sum $(OUTPUTFOLDER)/$(P).tar.gz | tee $(OUTPUTFOLDER)/$(P).tar.gz.checksum.txt
+	sha256sum $(OUTPUTFOLDER)/$(P)-py3-none-any.whl | tee $(OUTPUTFOLDER)/$(P)-py3-none-any.whl.checksum.txt
 	@echo done
 
 build-zip: build
