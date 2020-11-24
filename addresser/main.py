@@ -51,9 +51,9 @@ def cmd_parse(args):
     """
     try:
         a = parse(args.data)
-        print(_to_json(a, a.verbose))
+        print(_to_json(a, args.verbose))
     except Exception as err:
-        print(f"Error massaging data: {err}")
+        print(f"Error parsing data: {err}")
 
 
 def cmd_parse_file(args):
@@ -141,12 +141,12 @@ def main():
             "opts": [
                 {
                     "names": ["-o", "--output"],
-                    "help": "the output JSONlines file name",
+                    "help": "the output JSONlines file name (default: addresses.jsonl)",
                     "default": "addresses.jsonl"
                 },
                 {
                     "names": ["-i", "--input"],
-                    "help": "the input plain text file with addresses",
+                    "help": "the input plain text file with addresses (default: addresses.txt)",
                     "default": "addresses.txt"
                 },
                 {
@@ -164,12 +164,12 @@ def main():
             "opts": [
                 {
                     "names": ["-o", "--output"],
-                    "help": "the file to write the list to",
+                    "help": "the file to write the list to (default: addresses.txt)",
                     "default": "addresses.txt"
                 },
                 {
                     "names": ["-n", "--num"],
-                    "help": "number of records to generate",
+                    "help": "number of records to generate (default: 100)",
                     "type": int,
                     "default": 100,
                 },
@@ -183,7 +183,9 @@ def main():
         },
 
     ]
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter
+    )
     subparsers = parser.add_subparsers()
     subparsers.required = True
     subparsers.dest = "command"
