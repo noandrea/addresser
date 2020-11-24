@@ -4,3 +4,4 @@ coverage.xml
 dist
 private
 test-results.xml
+**/*.pyc

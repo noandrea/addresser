@@ -27,6 +27,10 @@ build: clean build-dist
 build-dist: $(GOFILES)
 	@echo build binary to $(OUTPUTFOLDER)
 	poetry build
+
+	$(eval P=$(shell poetry version | sed -e 's/ /-/g'))
+	sha256sum $(OUTPUTFOLDER)/$(P).tar.gz | tee $(OUTPUTFOLDER)/$(P).tar.gz.checksum
+	sha256sum $(OUTPUTFOLDER)/$(P)-py3-none-any.whl | tee $(OUTPUTFOLDER)/$(P)-py3-none-any.whl.checksum
 	@echo done
 
 build-zip: build
@@ -80,22 +84,32 @@ changelog:
 
 git-release:
 	@echo making release
+	# add pyproject
 	git tag $(GIT_DESCR)
 	git-chglog --output CHANGELOG.md
 	git tag $(GIT_DESCR) --delete
 	git add CHANGELOG.md && git commit -m "$(GIT_DESCR)" -m "Changelog: https://github.com/noandrea/$(APP)/blob/master/CHANGELOG.md"
+	git add pyproject.toml
 	git tag -a "$(GIT_DESCR)" -m "Changelog: https://github.com/noandrea/$(APP)/blob/master/CHANGELOG.md"
 	@echo release complete
 
 
 _release-patch:
 	$(eval GIT_DESCR = $(shell git describe --tags | awk -F '("|")' '{ print($$1)}' | awk -F. '{$$NF = $$NF + 1;} 1' | sed 's/ /./g'))
+	poetry version patch
 release-patch: _release-patch git-release
 
 _release-minor:
 	$(eval GIT_DESCR = $(shell git describe --tags | awk -F '("|")' '{ print($$1)}' | awk -F. '{$$(NF-1) = $$(NF-1) + 1;} 1' | sed 's/ /./g' | awk -F. '{$$(NF) = 0;} 1' | sed 's/ /./g'))
+	poetry version minor
 release-minor: _release-minor git-release
 
 _release-major:
 	$(eval GIT_DESCR = $(shell git describe --tags | awk -F '("|")' '{ print($$1)}' | awk -F. '{$$(NF-2) = $$(NF-2) + 1;} 1' | sed 's/ /./g' | awk -F. '{$$(NF-1) = 0;} 1' | sed 's/ /./g' | awk -F. '{$$(NF) = 0;} 1' | sed 's/ /./g' ))
+	poetry version major
 release-major: _release-major git-release 
+
+gh-publish-release: clean build
+	@echo publish release
+	gh release create $(GIT_DESCR) $(OUTPUTFOLDER)/* -t v$(GIT_DESCR) -F CHANGELOG.md
+	@echo done
